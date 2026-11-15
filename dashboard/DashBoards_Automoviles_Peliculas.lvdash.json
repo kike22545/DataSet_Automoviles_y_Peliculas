@@ -1,0 +1,658 @@
+{
+  "datasets": [
+    {
+      "name": "77a4a345",
+      "displayName": "peliculas",
+      "config": {
+        "version": "1.1",
+        "source": "smartdata_jeol.gold.peliculas",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "7235f486",
+      "displayName": "automoviles_resumen",
+      "config": {
+        "version": "1.1",
+        "source": "smartdata_jeol.gold.automoviles_resumen",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "45ecf8ce",
+      "displayName": "top_10_peliculas",
+      "queryLines": [
+        "SELECT\r\n",
+        "    title,\r\n",
+        "    AVG(user_score) AS calificacion_promedio\r\n",
+        "FROM smartdata_jeol.gold.peliculas\r\n",
+        "WHERE user_score IS NOT NULL\r\n",
+        "GROUP BY title\r\n",
+        "ORDER BY calificacion_promedio DESC, title ASC\r\n",
+        "LIMIT 10;"
+      ]
+    },
+    {
+      "name": "c90de218",
+      "displayName": "Top_5_idiomas_peliculas",
+      "queryLines": [
+        "SELECT\r\n",
+        "    CASE language\r\n",
+        "        WHEN 'en' THEN 'Inglés'\r\n",
+        "        WHEN 'fr' THEN 'Francés'\r\n",
+        "        WHEN 'it' THEN 'Italiano'\r\n",
+        "        WHEN 'ja' THEN 'Japonés'\r\n",
+        "        WHEN 'es' THEN 'Español'\r\n",
+        "        ELSE language\r\n",
+        "    END AS idioma,\r\n",
+        "    COUNT(*) AS total_peliculas\r\n",
+        "FROM smartdata_jeol.gold.peliculas\r\n",
+        "WHERE language IS NOT NULL\r\n",
+        "GROUP BY language\r\n",
+        "ORDER BY total_peliculas DESC\r\n",
+        "LIMIT 5;"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "d6f081bb",
+      "displayName": "DashBoard de Autos y Películas",
+      "layout": [
+        {
+          "widget": {
+            "name": "total-de-peliculas",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "77a4a345",
+                  "fields": [
+                    {
+                      "name": "count(id)",
+                      "expression": "COUNT(`id`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Total de Peliculas",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "count(id)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "promedio-calificacion-pelicula",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "77a4a345",
+                  "fields": [
+                    {
+                      "name": "avg(user_score)",
+                      "expression": "AVG(`user_score`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Promedio Calificación Pelicula",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(user_score)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "marcas-totales-autos",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "7235f486",
+                  "fields": [
+                    {
+                      "name": "countdistinct(make)",
+                      "expression": "COUNT(DISTINCT `make`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Marcas totales de autos",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "countdistinct(make)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "precio-promedio-autos",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "7235f486",
+                  "fields": [
+                    {
+                      "name": "avg(precio_promedio)",
+                      "expression": "AVG(`precio_promedio`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Precio promedio por Marca de Autos",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(precio_promedio)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "marcas-autos-registrados",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "7235f486",
+                  "fields": [
+                    {
+                      "name": "make",
+                      "expression": "`make`"
+                    },
+                    {
+                      "name": "sum(total_automoviles)",
+                      "expression": "SUM(`total_automoviles`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Cantidad de autos por cada marca\n<p>&nbsp;</p>\n",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "make",
+                  "axis": {
+                    "hideTitle": true,
+                    "hideLabels": false
+                  },
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_automoviles)",
+                  "axis": {
+                    "hideTitle": true
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 3,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "precio-promedio-marca-auto",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "7235f486",
+                  "fields": [
+                    {
+                      "name": "make",
+                      "expression": "`make`"
+                    },
+                    {
+                      "name": "avg(precio_promedio)",
+                      "expression": "AVG(`precio_promedio`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Precio promedio por cada Marca de auto",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "make",
+                  "axis": {
+                    "hideTitle": true,
+                    "hideLabels": false
+                  },
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "avg(precio_promedio)",
+                  "axis": {
+                    "hideTitle": true
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 9,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "top-10-peliculas-mayor-calificacion",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "45ecf8ce",
+                  "fields": [
+                    {
+                      "name": "title",
+                      "expression": "`title`"
+                    },
+                    {
+                      "name": "calificacion_promedio",
+                      "expression": "`calificacion_promedio`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Top 10 Peliculas con mayor calificación ",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "title",
+                  "axis": {
+                    "hideTitle": true,
+                    "hideLabels": false
+                  },
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "calificacion_promedio",
+                  "axis": {
+                    "hideTitle": true
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "top-5-idiomas-en-peliculas",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c90de218",
+                  "fields": [
+                    {
+                      "name": "sum(total_peliculas)",
+                      "expression": "SUM(`total_peliculas`)"
+                    },
+                    {
+                      "name": "idioma",
+                      "expression": "`idioma`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Top 5 idiomas en peliculas",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "sum(total_peliculas)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "axis": {
+                    "hideTitle": true
+                  }
+                },
+                "color": {
+                  "fieldName": "idioma",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "marca-auto1",
+            "queries": [
+              {
+                "name": "dashboards/01f1e08792e71b2097d869ef6fa19a4e/datasets/01f1e08803bd15f8b30282b3f13f866c_make",
+                "query": {
+                  "datasetName": "7235f486",
+                  "fields": [
+                    {
+                      "name": "make",
+                      "expression": "`make`"
+                    },
+                    {
+                      "name": "make_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Marca Auto",
+                  "fields": []
+                }
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "make",
+                    "queryName": "dashboards/01f1e08792e71b2097d869ef6fa19a4e/datasets/01f1e08803bd15f8b30282b3f13f866c_make"
+                  }
+                ]
+              }
+            },
+            "filterSources": {
+              "mode": "EXCLUDE",
+              "global": {
+                "all": true
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "idioma-pelicula",
+            "queries": [
+              {
+                "name": "dashboards/01f1e08792e71b2097d869ef6fa19a4e/datasets/01f1e087f769173bb83831328d2f032e_user_score",
+                "query": {
+                  "datasetName": "77a4a345",
+                  "fields": [
+                    {
+                      "name": "min(user_score)",
+                      "expression": "MIN(`user_score`)"
+                    },
+                    {
+                      "name": "max(user_score)",
+                      "expression": "MAX(`user_score`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Calificación Pelicula",
+                  "fields": []
+                }
+              },
+              "widgetType": "range-slider",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "user_score",
+                    "queryName": "dashboards/01f1e08792e71b2097d869ef6fa19a4e/datasets/01f1e087f769173bb83831328d2f032e_user_score"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
