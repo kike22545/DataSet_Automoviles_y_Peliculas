@@ -1,0 +1,41 @@
+
+name: Deploy Azure Databricks
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "proceso/**"
+      - ".github/workflows/deploy_databricks.yml"
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Desplegar notebooks a Databricks
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: |
+          databricks workspace mkdirs /Shared/DataSet_Automoviles_y_Peliculas
+
+          for file in proceso/*.py; do
+            name=$(basename "$file" .py)
+
+            databricks workspace import \
+              "/Shared/DataSet_Automoviles_y_Peliculas/$name" \
+              --file "$file" \
+              --language PYTHON \
+              --format SOURCE \
+              --overwrite
+          done
