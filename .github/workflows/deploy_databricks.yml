@@ -15,6 +15,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      DATABRICKS_AUTH_TYPE: pat
+
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
@@ -22,12 +27,28 @@ jobs:
       - name: Instalar Databricks CLI
         uses: databricks/setup-cli@main
 
-      - name: Desplegar notebooks a Databricks
-        env:
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      - name: Validar configuracion
         run: |
-          databricks workspace mkdirs /Shared/DataSet_Automoviles_y_Peliculas
+          if [ -z "$DATABRICKS_HOST" ]; then
+            echo "::error::Falta DATABRICKS_HOST"
+            exit 1
+          fi
+
+          if [ -z "$DATABRICKS_TOKEN" ]; then
+            echo "::error::Falta DATABRICKS_TOKEN"
+            exit 1
+          fi
+
+          echo "Las variables de autenticacion estan configuradas."
+
+      - name: Verificar conexion Databricks
+        run: |
+          databricks current-user me
+
+      - name: Desplegar notebooks a Databricks
+        run: |
+          databricks workspace mkdirs \
+            /Shared/DataSet_Automoviles_y_Peliculas
 
           for file in proceso/*.py; do
             name=$(basename "$file" .py)
