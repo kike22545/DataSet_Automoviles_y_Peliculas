@@ -83,6 +83,15 @@ Publicación del dashboard interactivo para el análisis de automóviles y pelí
 
 ---
 
+## 16. Arquitectura del Proyecto
+
+Diagrama de arquitectura tecnológica End-to-End del proyecto
+DataSet_Automoviles_y_Peliculas, desarrollado en Microsoft Azure
+y Azure Databricks.
+ 
+
+![Arquitectura del Proyecto](16.Arquitectura.png)
+
 ## Tecnologías utilizadas
 
 - Microsoft Azure
